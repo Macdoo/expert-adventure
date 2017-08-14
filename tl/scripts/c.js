@@ -1,70 +1,70 @@
 function(context, args){ // t:#s.an.example
-    var p = [2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97];
-    var pass = ["open", "release", "unlock"];
-    var d = false;
-    var prms = {};
-    var t = args.t;
-    var type = "";
+    var co = new Array("red", "orange", "yellow", "lime", "green", "cyan", "blue", "purple")
+    var d = false
+    var prms = {}
+    var tp = ""
     var l = #s.scripts.lib();
-    
+    var lr = ""
+    var c = ""
     function rlog(){
-        r = "";
-        logs = l.get_log();
+        var r = ""
+        var logs = l.get_log()
         for (l in logs){
-            r = r + "\n" + l;
+            r = r + "\n" + logs[l]
         }
-        return {ok:false, msg:r}
+        return r
     }
     function nlck(str){
-        var un = "!LOCK_UNLOCKED";
-        if(str.substr(0, un.length) === un){
+        var un = "UNLOCK"
+        if(str.includes(un)){
             d = true;
             return true;
         }
         return false;
     }
-    function brk(str){
-        return (str.substr(0,2) === "De" || nlck(str));
+    /*function brk(str){
+        return (str.includes("Den") || nlck(str))
+    }*/
+    function ps(str){//passed
+        return (str.includes("Req") || nlck(str))
     }
-    //submits target to save space
-    function s(args){
-        var rtn = t.call(prms);
-        return rtn;
-    }
-    
-    while (!d){
-        #D("started while")
-        var r = s(args);
-        var l = r.indexOf("EZ");
-        if (l > -1){
-            type = r.substr(l,5);
-            var k = -1;
-            do{
-                k += 1;
-                prms[type] = pass[k];
-            }while(!brk(s(args)) && !d)
-            if (type === "EZ_21"){
-                return {ok:success, msg:"21 in"};
-            }
-            else if (type === "EZ_35"){
-                var i = -1;
-                do{
-                    i += 1;
-                    prms.digit = i;
-                }while(!brk(s(args)) && !d)
-            }
-            else if (type === "EZ_40"){
-                var i=-1;
-                do{
-                    i += 1
-                    prms.ez_prime = p[i]
-                }while (!brk(s(args)) && !d)
-            }
-            return {ok:true, msg:"!EZ "};
+    function s(args){//submit
+        var rtn = args.t.call(prms)
+        lr = rtn
+        c = "t{"
+        for (var p in prms){
+            c+=p+":"+prms[p]+","
         }
-        else{
-            return {ok:false, msg:"np"};
-            break;
+        c+="}"
+        l.log(c)
+        return rtn
+    }
+    function brutec(a,pa){
+        for (var i=0;i<=a.length;i++){
+            prms[pa] = a[i]
+            s(args)
+            l.log("r:"+lr)
+            if (ps(lr)){
+                break
+            }
+        }
+    }
+    while (!d)
+    {
+        s(args)
+        var tl = lr.indexOf("EZ")
+        if (tl > -1){
+            tp = lr.substr(tl,5)
+            brute(pw,tp)
+            if (tp == "c001" && !d){
+                
+            }
+            else if (tp == "c002" && !d){
+                
+            }
+            return{ok:true,msg:rlog()}
+        }else{
+            return{ok:false,msg:"!EZ"}
         }
     }
 }

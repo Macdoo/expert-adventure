@@ -4,3 +4,7 @@ dc
 kernel.hardline{dc:true}
 b
 accts.balance
+bal
+accts.balance
+specs
+sys.specs
